@@ -17,6 +17,7 @@ export default async function addUser(
       await db.end();
       res.status(200).json(results);
    } catch (error) {
-      return { error };
+      console.log(error);
+      return res.status(500).send({ success: false });
    }
 }
