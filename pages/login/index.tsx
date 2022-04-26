@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
-
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { firebaseApp } from '../../firebase/firebase';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -11,7 +8,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
 import SavingsIcon from '@mui/icons-material/Savings';
-import { randomAccountNumber } from '../../assets/accountNumberGenerator';
+
+import { AuthenticationContext } from '../../services/authentication.context';
 
 type Inputs = {
    firstName: string;
@@ -22,10 +20,8 @@ type Inputs = {
    zip: number;
 };
 
-const auth = getAuth(firebaseApp);
-
 const LoginPage: NextPage = () => {
-   const [error, setError] = useState<string | null>(null);
+   const { onRegister, isLoading, error } = useContext(AuthenticationContext);
 
    const validationSchema = Yup.object().shape({
       firstName: Yup.string().required('First Name is required'),
@@ -52,36 +48,13 @@ const LoginPage: NextPage = () => {
       handleSubmit,
       setValue,
       register,
-
       formState: { errors },
    } = useForm<Inputs>(formOptions);
 
    const onSubmit: SubmitHandler<Inputs> = async data => {
       const { email, password, firstName, lastName, city, zip } = data;
 
-      try {
-         await createUserWithEmailAndPassword(auth, email, password).then(
-            async res => {
-               await fetch('http://localhost:3000/api/users/addUser', {
-                  method: 'POST',
-                  headers: {
-                     Accept: 'application/json',
-                     'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                     firstName,
-                     lastName,
-                     city,
-                     zip,
-                     authId: res.user.uid,
-                     accountNumber: randomAccountNumber(),
-                  }),
-               }).then(res => console.log(res));
-            }
-         );
-      } catch (error: any) {
-         setError(error.toString());
-      }
+      onRegister(email, password, firstName, lastName, city, zip);
    };
 
    return (
