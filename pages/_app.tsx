@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import type { AppProps } from 'next/app';
+import { User as FirebaseUser } from '@firebase/auth';
 
 import {
    createUserWithEmailAndPassword,
@@ -15,15 +16,18 @@ import { randomAccountNumber } from '../assets/accountNumberGenerator';
 import { AuthenticationContext } from '../services/authentication.context';
 
 import '../styles/globals.css';
+
 import LoadingIndicator from '../components/LoadingIndicator';
+import Sidebar from '../components/Sidebar';
 
 const App = ({ Component, pageProps }: AppProps) => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
-   const [user, setUser] = useState<object | null>(null);
+   const [user, setUser] = useState<FirebaseUser | null>(null);
+   const [userData, setUserData] = useState();
    const [error, setError] = useState(null);
    const [authorized, setAuthorized] = useState<boolean>(false);
 
-   const { push, pathname, events, asPath } = useRouter();
+   const { push, events, asPath } = useRouter();
 
    const auth = getAuth(firebaseApp);
 
@@ -53,8 +57,8 @@ const App = ({ Component, pageProps }: AppProps) => {
                   authId: res.user.uid,
                   accountNumber: randomAccountNumber(),
                }),
-            }).then(user => {
-               setUser(user);
+            }).then(() => {
+               setUser(res.user);
                setIsLoading(false);
 
                push('/dashboard');
@@ -68,17 +72,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
    const onLogin = async (email: string, password: string) => {
       setIsLoading(true);
-      await signInWithEmailAndPassword(auth, email, password)
-         .then(user => {
-            setUser(user);
-            setIsLoading(false);
-
-            push('/dashboard');
-         })
-         .catch(e => {
-            setIsLoading(false);
-            setError(e.toString());
-         });
+      await signInWithEmailAndPassword(auth, email, password);
    };
 
    const onLogout = () => {
@@ -101,6 +95,27 @@ const App = ({ Component, pageProps }: AppProps) => {
    };
 
    useEffect(() => {
+      const getUserData = async () => {
+         const response = await fetch(
+            `http://localhost:3000/api/users/getUser?id=${user?.uid}`,
+            {
+               method: 'GET',
+               headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+               },
+            }
+         );
+         const data = await response.json();
+
+         setUserData(data[0]);
+      };
+      if (user) {
+         getUserData();
+      }
+   }, [user]);
+
+   useEffect(() => {
       const hideContent = () => setAuthorized(false);
 
       authUrlCheck(asPath);
@@ -110,6 +125,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             setUser(usr);
             setIsLoading(false);
             setAuthorized(true);
+
             push('/dashboard');
          } else {
             setIsLoading(false);
@@ -128,8 +144,8 @@ const App = ({ Component, pageProps }: AppProps) => {
    return (
       <AuthenticationContext.Provider
          value={{
-            isAuthenticated: !!user,
             user,
+            userData,
             isLoading,
             error,
             onLogin,
@@ -137,8 +153,11 @@ const App = ({ Component, pageProps }: AppProps) => {
             onLogout,
          }}
       >
-         {isLoading && <LoadingIndicator />}
-         {authorized && <Component {...pageProps} />}
+         <div className='min-h-screen flex bg-gray'>
+            {isLoading && <LoadingIndicator />}
+            {user !== null && <Sidebar />}
+            {authorized && <Component {...pageProps} />}
+         </div>
       </AuthenticationContext.Provider>
    );
 };
