@@ -1,6 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import type { NextPage } from 'next';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -26,6 +27,7 @@ const RegisterPage: NextPage = () => {
    const { onRegister, isLoading, user, error } = useContext(
       AuthenticationContext
    );
+   const { push } = useRouter();
 
    const validationSchema = Yup.object().shape({
       firstName: Yup.string().required('First Name is required'),
@@ -129,6 +131,7 @@ const RegisterPage: NextPage = () => {
                            Password
                         </label>
                         <input
+                           autoComplete='off'
                            {...register('password')}
                            onChange={e => setValue('password', e.target.value)}
                            className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
@@ -148,6 +151,7 @@ const RegisterPage: NextPage = () => {
                            Email Address
                         </label>
                         <input
+                           autoComplete='off'
                            {...register('email')}
                            onChange={e => setValue('email', e.target.value)}
                            className='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'
@@ -211,10 +215,21 @@ const RegisterPage: NextPage = () => {
                         SUBMIT
                      </button>
                      {error && (
-                        <p className='text-red-500 mt-3 text-md italic'>
+                        <p className='text-red-500 mt-3 text-md italic text-center'>
                            {error}
                         </p>
                      )}
+                  </div>
+                  <div className='mt-7 mb-6 md:mb-0 '>
+                     <p className='text-center text-lg text-white'>
+                        I{"'"}m already a client.{' '}
+                        <span
+                           onClick={() => push('/login')}
+                           className='text-purple-light cursor-pointer'
+                        >
+                           Sign in
+                        </span>
+                     </p>
                   </div>
                </form>
             </div>

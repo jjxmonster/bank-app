@@ -6,6 +6,7 @@ import {
    createUserWithEmailAndPassword,
    getAuth,
    onAuthStateChanged,
+   signInWithEmailAndPassword,
    signOut,
 } from 'firebase/auth';
 import { firebaseApp } from '../firebase/firebase';
@@ -14,6 +15,7 @@ import { randomAccountNumber } from '../assets/accountNumberGenerator';
 import { AuthenticationContext } from '../services/authentication.context';
 
 import '../styles/globals.css';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const App = ({ Component, pageProps }: AppProps) => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,7 +23,7 @@ const App = ({ Component, pageProps }: AppProps) => {
    const [error, setError] = useState(null);
    const [authorized, setAuthorized] = useState<boolean>(false);
 
-   const router = useRouter();
+   const { push, pathname, events, asPath } = useRouter();
 
    const auth = getAuth(firebaseApp);
 
@@ -35,7 +37,7 @@ const App = ({ Component, pageProps }: AppProps) => {
    ) => {
       setIsLoading(true);
 
-      createUserWithEmailAndPassword(auth, email, password)
+      await createUserWithEmailAndPassword(auth, email, password)
          .then(async res => {
             await fetch('http://localhost:3000/api/users/addUser', {
                method: 'POST',
@@ -54,6 +56,8 @@ const App = ({ Component, pageProps }: AppProps) => {
             }).then(user => {
                setUser(user);
                setIsLoading(false);
+
+               push('/dashboard');
             });
          })
          .catch(e => {
@@ -62,58 +66,65 @@ const App = ({ Component, pageProps }: AppProps) => {
          });
    };
 
-   const onLogin = (email: string, password: string) => {
+   const onLogin = async (email: string, password: string) => {
       setIsLoading(true);
-      // loginRequest(email, password, auth)
-      //    .then(user => {
-      //       setUser(user);
-      //       setIsLoading(false);
-      //    })
-      //    .catch(e => {
-      //       setIsLoading(false);
-      //       setError(e.toString());
-      //    });
+      await signInWithEmailAndPassword(auth, email, password)
+         .then(user => {
+            setUser(user);
+            setIsLoading(false);
+
+            push('/dashboard');
+         })
+         .catch(e => {
+            setIsLoading(false);
+            setError(e.toString());
+         });
    };
 
    const onLogout = () => {
       setUser(null);
       signOut(auth);
+
+      push('/login');
    };
 
    const authUrlCheck = (url: string) => {
-      setUser(user);
       const publicPaths = ['/login', '/register'];
       const path = url.split('?')[0];
+
       if (!user && !publicPaths.includes(path)) {
          setAuthorized(false);
-         router.push('/register');
+         push('/login');
       } else {
          setAuthorized(true);
       }
    };
 
    useEffect(() => {
-      onAuthStateChanged(auth, usr => {
+      const hideContent = () => setAuthorized(false);
+
+      authUrlCheck(asPath);
+
+      const unsubscribe = onAuthStateChanged(auth, usr => {
          if (usr) {
             setUser(usr);
             setIsLoading(false);
+            setAuthorized(true);
+            push('/dashboard');
          } else {
             setIsLoading(false);
          }
       });
 
-      authUrlCheck(router.asPath);
-
-      const hideContent = () => setAuthorized(false);
-
-      router.events.on('routeChangeStart', hideContent);
-      router.events.on('routeChangeComplete', authUrlCheck);
+      events.on('routeChangeStart', hideContent);
+      events.on('routeChangeComplete', authUrlCheck);
 
       return () => {
-         router.events.off('routeChangeStart', hideContent);
-         router.events.off('routeChangeStart', authUrlCheck);
+         events.off('routeChangeStart', hideContent);
+         events.off('routeChangeComplete', authUrlCheck);
+         unsubscribe();
       };
-   }, []);
+   }, [user]);
    return (
       <AuthenticationContext.Provider
          value={{
@@ -126,6 +137,7 @@ const App = ({ Component, pageProps }: AppProps) => {
             onLogout,
          }}
       >
+         {isLoading && <LoadingIndicator />}
          {authorized && <Component {...pageProps} />}
       </AuthenticationContext.Provider>
    );
