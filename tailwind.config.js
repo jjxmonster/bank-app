@@ -25,6 +25,9 @@ module.exports = {
             '5xl': '3.3125rem',
             '6xl': '4rem',
          },
+         width: {
+            'page-width': 'calc(100vw - 24rem)',
+         },
       },
    },
    plugins: [],

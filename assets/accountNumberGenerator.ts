@@ -1,8 +1,8 @@
-export const randomAccountNumber = () => {
+export const randomNumber = (length: number): string => {
    let text = '';
    const possible = '0123456789';
 
-   for (let i = 0; i < 26; i++)
+   for (let i = 0; i < length; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
 
    return text;

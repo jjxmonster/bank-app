@@ -6,12 +6,19 @@ export default async function addUser(
    res: NextApiResponse
 ) {
    try {
-      const { firstName, lastName, city, zip, authId, accountNumber } =
-         req.body;
+      const {
+         firstName,
+         lastName,
+         city,
+         zip,
+         authId,
+         accountNumber,
+         cardNumber,
+      } = req.body;
 
       const results = await db.query(
-         'INSERT INTO users(auth_id, first_name, last_name, city, zip, acc_number) VALUES(?,?,?,?,?,?)',
-         [authId, firstName, lastName, city, zip, accountNumber]
+         'INSERT INTO users(auth_id, first_name, last_name, city, zip, acc_number, card_number, balance) VALUES(?,?,?,?,?,?,?,?)',
+         [authId, firstName, lastName, city, zip, accountNumber, cardNumber, 0]
       );
 
       await db.end();

@@ -9,7 +9,7 @@ export default async function getUser(
       const authId = req.query.id;
 
       const results = await db.query(
-         `SELECT auth_id, first_name, last_name, city, zip, acc_number FROM users WHERE auth_id = '${authId}'`
+         `SELECT auth_id, first_name, last_name, city, zip, acc_number, card_number, balance FROM users WHERE auth_id = '${authId}'`
       );
 
       await db.end();

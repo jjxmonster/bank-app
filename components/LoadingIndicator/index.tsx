@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 
 const LoadingIndicator: FunctionComponent = () => {
    return (
-      <div className='fixed w-screen h-screen  after:absolute after:w-full after:h-full z-30 bg-black opacity-40  flex items-center justify-center'>
+      <div className='fixed w-screen h-screen  after:absolute after:w-full after:h-full  z-50 bg-gray flex items-center justify-center'>
          <svg
             role='status'
             className='inline w-12 h-12 mr-3 animate-spin'

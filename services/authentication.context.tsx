@@ -3,11 +3,13 @@ import { User as FirebaseUser } from '@firebase/auth';
 
 type UserData = {
    acc_number: string;
+   balance: number;
    auth_id: string;
    city: string;
    first_name: string;
    last_name: string;
    zip: string;
+   card_number: string;
 };
 
 interface AuthenticationContext {
