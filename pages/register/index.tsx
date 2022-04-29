@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
-import type { NextPage } from 'next';
 import Image from 'next/image';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
+
+import type { NextPage } from 'next';
+import type { RegisterFormInputs } from '../../types/types';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -11,16 +14,6 @@ import * as Yup from 'yup';
 import SavingsIcon from '@mui/icons-material/Savings';
 
 import { AuthenticationContext } from '../../services/authentication.context';
-import Head from 'next/head';
-
-type Inputs = {
-   firstName: string;
-   lastName: string;
-   password: string;
-   email: string;
-   city: string;
-   zip: number;
-};
 
 const RegisterPage: NextPage = () => {
    const { onRegister, error } = useContext(AuthenticationContext);
@@ -52,9 +45,9 @@ const RegisterPage: NextPage = () => {
       setValue,
       register,
       formState: { errors },
-   } = useForm<Inputs>(formOptions);
+   } = useForm<RegisterFormInputs>(formOptions);
 
-   const onSubmit: SubmitHandler<Inputs> = data => {
+   const onSubmit: SubmitHandler<RegisterFormInputs> = data => {
       const { email, password, firstName, lastName, city, zip } = data;
 
       onRegister(email, password, firstName, lastName, city, zip);
@@ -63,7 +56,7 @@ const RegisterPage: NextPage = () => {
    return (
       <>
          <Head>
-            <title>Create you account - Bank</title>
+            <title>Create you account | Bank</title>
          </Head>
 
          <div className='w-auto flex'>

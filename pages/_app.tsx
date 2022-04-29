@@ -18,7 +18,7 @@ import { onRegister, getUserData } from '../services/authentication.service';
 import '../styles/globals.css';
 
 import LoadingIndicator from '../components/LoadingIndicator';
-import Sidebar from '../components/Sidebar';
+import AppLayout from '../components/Layout';
 
 const App = ({ Component, pageProps }: AppProps) => {
    const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -129,10 +129,10 @@ const App = ({ Component, pageProps }: AppProps) => {
             onLogout,
          }}
       >
-         <div className='min-h-screen flex bg-gray'>
+         <div className='min-h-screen flex bg-gray max-h-screen'>
             {isLoading && <LoadingIndicator />}
             {user && pathname !== '/register' && pathname !== '/login' && (
-               <Sidebar />
+               <AppLayout />
             )}
             {authorized && <Component {...pageProps} />}
          </div>

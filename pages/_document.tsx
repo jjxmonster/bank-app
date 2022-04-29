@@ -14,6 +14,8 @@ export default function Document() {
                href='https://fonts.googleapis.com/css2?family=Raleway:wght@100;300;500;600;700&display=swap'
                rel='stylesheet'
             />
+
+            <script src='https://js.stripe.com/v3/'></script>
          </Head>
          <body className='bg-gray'>
             <Main />

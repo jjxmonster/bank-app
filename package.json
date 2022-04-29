@@ -14,13 +14,17 @@
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.8.8",
     "@mui/icons-material": "^5.6.2",
+    "@stripe/stripe-js": "^1.29.0",
+    "chart.js": "^3.7.1",
     "firebase": "^9.6.11",
     "mysql2": "^2.3.3",
     "next": "12.1.5",
     "react": "18.0.0",
+    "react-chartjs-2": "^4.1.0",
     "react-dom": "18.0.0",
     "react-hook-form": "^7.30.0",
     "serverless-mysql": "^1.5.4",
+    "stripe": "^8.219.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {

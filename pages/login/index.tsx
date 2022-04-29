@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
-import type { NextPage } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+
+import type { NextPage } from 'next';
+import type { LoginFormInputs } from '../../types/types';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
@@ -11,12 +14,6 @@ import * as Yup from 'yup';
 import SavingsIcon from '@mui/icons-material/Savings';
 
 import { AuthenticationContext } from '../../services/authentication.context';
-import Head from 'next/head';
-
-type Inputs = {
-   password: string;
-   email: string;
-};
 
 const RegisterPage: NextPage = () => {
    const { onLogin, user, error } = useContext(AuthenticationContext);
@@ -37,9 +34,9 @@ const RegisterPage: NextPage = () => {
       setValue,
       register,
       formState: { errors },
-   } = useForm<Inputs>(formOptions);
+   } = useForm<LoginFormInputs>(formOptions);
 
-   const onSubmit: SubmitHandler<Inputs> = data => {
+   const onSubmit: SubmitHandler<LoginFormInputs> = data => {
       const { email, password } = data;
 
       onLogin(email, password);
@@ -47,7 +44,7 @@ const RegisterPage: NextPage = () => {
    return (
       <>
          <Head>
-            <title>Welcome back - Sign in - Bank</title>
+            <title>Welcome back | Sign in | Bank</title>
          </Head>
 
          <div className='w-auto flex'>
