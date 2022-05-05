@@ -5,7 +5,7 @@ import { randomNumber } from '../assets/accountNumberGenerator';
 
 export const getUserData = async (user: FirebaseUser | null) => {
    const response = await fetch(
-      `http://localhost:3000/api/users/getUser?id=${user?.uid}`,
+      `http://localhost:3000/api/users/get_user?id=${user?.uid}`,
       {
          method: 'GET',
          headers: {
@@ -30,7 +30,7 @@ export const onRegister = async (
 ) => {
    return await createUserWithEmailAndPassword(auth, email, password).then(
       async res => {
-         return await fetch('http://localhost:3000/api/users/addUser', {
+         return await fetch('http://localhost:3000/api/users/add_user', {
             method: 'POST',
             headers: {
                Accept: 'application/json',

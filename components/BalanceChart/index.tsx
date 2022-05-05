@@ -11,8 +11,8 @@ const data = {
          label: 'Balance',
          data: [3490, 5420, 6000, 3252, 4414, 6215],
          fill: true,
-         backgroundColor: '#6C63FF',
-         borderColor: '#53556842',
+         // backgroundColor: '#6C63FF',
+         borderColor: '#6C63FF',
       },
    ],
 };
