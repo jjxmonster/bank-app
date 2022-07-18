@@ -72,7 +72,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 
       if (!user && !publicPaths.includes(path)) {
          setAuthorized(false);
-         push('/login');
+         // push('/login');
       } else {
          setAuthorized(true);
       }
@@ -101,7 +101,11 @@ const App = ({ Component, pageProps }: AppProps) => {
             setIsLoading(false);
             setAuthorized(true);
 
-            push('/dashboard');
+            if (pathname.includes('dashboard')) {
+               return;
+            } else {
+               push('/dashboard');
+            }
          } else {
             setUser(null);
             setIsLoading(false);
